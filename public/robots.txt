@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://3d-print-calculator.pages.dev/sitemap.xml
