@@ -532,17 +532,17 @@ export function App() {
                   <Repeat className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-wider">Repeat User Retention Rate</span>
                 </div>
-                <span className="font-mono text-3xl font-extrabold text-foreground">41.2%</span>
-                <span className="text-[11px] text-zinc-400 block mt-1">4 out of 10 users bookmark and return</span>
+                <span className="font-mono text-3xl font-extrabold text-foreground">0.0%</span>
+                <span className="text-[11px] text-zinc-400 block mt-1">Awaiting real visitor traffic data</span>
               </div>
 
               <div className="border border-zinc-800 bg-zinc-900/60 p-5 rounded-2xl">
                 <div className="flex items-center gap-2 mb-2 text-purple-400">
                   <FileCheck className="w-4 h-4" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Monthly Client PDF Exports</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">Actual Client PDF Exports</span>
                 </div>
-                <span className="font-mono text-3xl font-extrabold text-foreground">1,240</span>
-                <span className="text-[11px] text-zinc-400 block mt-1">Used by commercial 3D print shops</span>
+                <span className="font-mono text-3xl font-extrabold text-foreground">0</span>
+                <span className="text-[11px] text-zinc-400 block mt-1">Logs when users click Export PDF</span>
               </div>
 
               <div className="border border-zinc-800 bg-zinc-900/60 p-5 rounded-2xl">
@@ -550,8 +550,8 @@ export function App() {
                   <Laptop className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-wider">Avg Session Time</span>
                 </div>
-                <span className="font-mono text-3xl font-extrabold text-foreground">2m 03s</span>
-                <span className="text-[11px] text-zinc-400 block mt-1">High dwell time = High viewability CPM</span>
+                <span className="font-mono text-3xl font-extrabold text-foreground">0m 00s</span>
+                <span className="text-[11px] text-zinc-400 block mt-1">Measured per active user session</span>
               </div>
             </div>
 
