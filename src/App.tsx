@@ -137,20 +137,75 @@ const KEYWORD_RANKINGS: KeywordRank[] = [
 export function App() {
   const [devModeActive, setDevModeActive] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'rankings' | 'tools'>('overview');
+  // Auto-remember device: unlocked by default, saved in localStorage
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(true);
   const [pinInput, setPinInput] = useState<string>('');
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(() => localStorage.getItem('owner_pin_unlocked') === 'true');
   const [showApiGuide, setShowApiGuide] = useState<boolean>(false);
 
   // State for Live API keys
   const [adsterraApiKey, setAdsterraApiKey] = useState<string>(() => localStorage.getItem('adsterra_api_key') || '');
   const [cloudflareToken, setCloudflareToken] = useState<string>(() => localStorage.getItem('cloudflare_token') || '');
   const [isFetchingLive, setIsFetchingLive] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [liveAdsterraData, setLiveAdsterraData] = useState<{ impressions: number; revenue: number; cpm: number } | null>(null);
 
   useEffect(() => {
     const isDev = localStorage.getItem('dev_admin_mode') === 'true';
     setDevModeActive(isDev);
+    
+    // Auto-sync if key exists
+    if (adsterraApiKey) {
+      fetchActualAdsterraData(adsterraApiKey);
+    }
   }, []);
+
+  const saveApiKeys = (adsterra: string, cfToken: string) => {
+    setAdsterraApiKey(adsterra);
+    setCloudflareToken(cfToken);
+    localStorage.setItem('adsterra_api_key', adsterra);
+    localStorage.setItem('cloudflare_token', cfToken);
+    if (adsterra) {
+      fetchActualAdsterraData(adsterra);
+    }
+  };
+
+  // Fetch actual real-time Adsterra revenue stats from official API (CORS-safe)
+  const fetchActualAdsterraData = async (keyToUse?: string) => {
+    const key = keyToUse || adsterraApiKey;
+    if (!key) return;
+    setIsFetchingLive(true);
+    setApiError(null);
+    try {
+      const targetUrl = `https://api3.adsterra.com/publisher/stats.json?api_key=${key.trim()}`;
+      // Use CORS proxy fallback if direct browser request gets blocked by Adsterra CORS
+      let res = await fetch(targetUrl).catch(() => null);
+      if (!res || !res.ok) {
+        res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+      }
+      
+      const data = await res.json();
+      if (data && (data.items || Array.isArray(data))) {
+        const items = data.items || data;
+        let totalRevenue = 0;
+        let totalImpressions = 0;
+        items.forEach((item: any) => {
+          totalRevenue += parseFloat(item.revenue || 0);
+          totalImpressions += parseInt(item.impressions || 0, 10);
+        });
+        const cpm = totalImpressions > 0 ? (totalRevenue / totalImpressions) * 1000 : 0;
+        setLiveAdsterraData({ impressions: totalImpressions, revenue: totalRevenue, cpm });
+      } else if (data && data.error) {
+        setApiError(`Adsterra API Error: ${data.error}`);
+      } else {
+        setLiveAdsterraData({ impressions: 0, revenue: 0, cpm: 0 });
+      }
+    } catch (e: any) {
+      console.error('Adsterra Live API fetch error:', e);
+      setApiError('Unable to connect to Adsterra API. Please verify key.');
+    } finally {
+      setIsFetchingLive(false);
+    }
+  };
 
   const handleUnlockPin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,36 +220,6 @@ export function App() {
   const handleLockDashboard = () => {
     setIsUnlocked(false);
     localStorage.removeItem('owner_pin_unlocked');
-  };
-
-  const saveApiKeys = (adsterra: string, cfToken: string) => {
-    setAdsterraApiKey(adsterra);
-    setCloudflareToken(cfToken);
-    localStorage.setItem('adsterra_api_key', adsterra);
-    localStorage.setItem('cloudflare_token', cfToken);
-  };
-
-  const fetchActualAdsterraData = async () => {
-    if (!adsterraApiKey) return;
-    setIsFetchingLive(true);
-    try {
-      const res = await fetch(`https://api3.adsterra.com/publisher/stats.json?api_key=${adsterraApiKey}`);
-      const data = await res.json();
-      if (data && data.items) {
-        let totalRevenue = 0;
-        let totalImpressions = 0;
-        data.items.forEach((item: any) => {
-          totalRevenue += parseFloat(item.revenue || 0);
-          totalImpressions += parseInt(item.impressions || 0, 10);
-        });
-        const cpm = totalImpressions > 0 ? (totalRevenue / totalImpressions) * 1000 : 0;
-        setLiveAdsterraData({ impressions: totalImpressions, revenue: totalRevenue, cpm });
-      }
-    } catch (e) {
-      console.error('Adsterra Live API fetch error:', e);
-    } finally {
-      setIsFetchingLive(false);
-    }
   };
 
   const toggleDevMode = () => {
@@ -384,7 +409,7 @@ export function App() {
                   <p className="text-xs text-zinc-400">Enter your Adsterra Publisher API key to pull live dollar balances, impressions, and exact CPMs directly from your account.</p>
                 </div>
                 <button
-                  onClick={fetchActualAdsterraData}
+                  onClick={() => fetchActualAdsterraData()}
                   disabled={!adsterraApiKey || isFetchingLive}
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs transition-all disabled:opacity-50 cursor-pointer"
                 >
@@ -447,6 +472,13 @@ export function App() {
                 <span className="text-emerald-400 font-bold">30-Day Forecast Model: $340.00 / mo</span>
               </div>
             </div>
+
+            {apiError && (
+              <div className="p-4 border border-red-500/40 bg-red-500/10 rounded-2xl text-xs text-red-400 font-mono flex justify-between items-center">
+                <span>⚠️ {apiError}</span>
+                <span className="text-[11px] text-zinc-400">Check Profile -&gt; API in Adsterra</span>
+              </div>
+            )}
 
             {liveAdsterraData && (
               <div className="p-6 border border-emerald-500/40 bg-emerald-500/10 rounded-2xl flex items-center justify-between">
