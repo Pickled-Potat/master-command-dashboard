@@ -87,7 +87,7 @@ const PORTFOLIO_TOOLS: ToolItem[] = [
     id: 'tool-4',
     name: 'Aspect Ratio & Resolution Converter',
     niche: 'Graphic Design & Social Media',
-    url: 'https://aspect-ratio-calc.pages.dev',
+    url: 'https://aspect-ratio-calc-6f5.pages.dev',
     githubRepo: 'https://github.com/Pickled-Potat/aspect-ratio-calc',
     status: 'LIVE',
     estDailyVisitors: 0,
