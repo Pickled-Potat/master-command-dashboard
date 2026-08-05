@@ -455,21 +455,21 @@ export function App() {
               </div>
 
               {/* Visual SVG Line Graph */}
-              <div className="h-44 w-full pt-4 flex items-end justify-between gap-2 px-2 border-b border-zinc-800 pb-2">
-                {[12, 18, 22, 28, 35, 42, 50, 64, 78, 95, 110, 135, 160, 195].map((val, idx) => (
+              <div className="h-44 w-full pt-4 flex items-end justify-between gap-2 px-2 border-b border-zinc-800 pb-2 opacity-50">
+                {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, idx) => (
                   <div key={idx} className="flex-1 flex flex-col items-center gap-1 group">
                     <div
-                      style={{ height: `${(val / 200) * 100}%` }}
-                      className="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t transition-all group-hover:from-emerald-500 group-hover:to-emerald-300"
+                      style={{ height: '4px' }}
+                      className="w-full bg-zinc-800 rounded-t"
                     />
-                    <span className="text-[9px] font-mono text-zinc-500 group-hover:text-zinc-300">W{idx + 1}</span>
+                    <span className="text-[9px] font-mono text-zinc-600">W{idx + 1}</span>
                   </div>
                 ))}
               </div>
 
               <div className="flex justify-between items-center text-xs font-mono pt-2">
-                <span className="text-zinc-400">Current Monthly Output: <strong className="text-foreground">$195.00 / mo</strong></span>
-                <span className="text-emerald-400 font-bold">30-Day Forecast Model: $340.00 / mo</span>
+                <span className="text-zinc-400">Current Monthly Output: <strong className="text-foreground">$0.00 / mo</strong></span>
+                <span className="text-zinc-400 font-semibold">30-Day Forecast Model: Awaiting Live Sync Data</span>
               </div>
             </div>
 
