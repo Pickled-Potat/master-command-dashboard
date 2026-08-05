@@ -169,7 +169,7 @@ export function App() {
     }
   };
 
-  // Fetch actual real-time Adsterra revenue stats from official API (CORS-safe)
+  // Fetch actual real-time Adsterra revenue stats from official API (Free CORS proxy)
   const fetchActualAdsterraData = async (keyToUse?: string) => {
     const key = keyToUse || adsterraApiKey;
     if (!key) return;
@@ -177,10 +177,10 @@ export function App() {
     setApiError(null);
     try {
       const targetUrl = `https://api3.adsterra.com/publisher/stats.json?api_key=${key.trim()}`;
-      // Use CORS proxy fallback if direct browser request gets blocked by Adsterra CORS
+      // Try direct fetch first, fallback to free open-source AllOrigins CORS proxy
       let res = await fetch(targetUrl).catch(() => null);
       if (!res || !res.ok) {
-        res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+        res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
       }
       
       const data = await res.json();
