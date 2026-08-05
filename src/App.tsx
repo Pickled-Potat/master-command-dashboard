@@ -129,10 +129,48 @@ export function App() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'reddit' | 'tools'>('overview');
 
+  // State for Live API keys
+  const [adsterraApiKey, setAdsterraApiKey] = useState<string>(() => localStorage.getItem('adsterra_api_key') || '');
+  const [cloudflareToken, setCloudflareToken] = useState<string>(() => localStorage.getItem('cloudflare_token') || '');
+  const [isFetchingLive, setIsFetchingLive] = useState<boolean>(false);
+  const [liveAdsterraData, setLiveAdsterraData] = useState<{ impressions: number; revenue: number; cpm: number } | null>(null);
+
   useEffect(() => {
     const isDev = localStorage.getItem('dev_admin_mode') === 'true';
     setDevModeActive(isDev);
   }, []);
+
+  const saveApiKeys = (adsterra: string, cfToken: string) => {
+    setAdsterraApiKey(adsterra);
+    setCloudflareToken(cfToken);
+    localStorage.setItem('adsterra_api_key', adsterra);
+    localStorage.setItem('cloudflare_token', cfToken);
+  };
+
+  // Fetch actual real-time Adsterra revenue stats from official API
+  const fetchActualAdsterraData = async () => {
+    if (!adsterraApiKey) return;
+    setIsFetchingLive(true);
+    try {
+      // Fetch stats from Adsterra Publisher API
+      const res = await fetch(`https://api3.adsterra.com/publisher/stats.json?api_key=${adsterraApiKey}`);
+      const data = await res.json();
+      if (data && data.items) {
+        let totalRevenue = 0;
+        let totalImpressions = 0;
+        data.items.forEach((item: any) => {
+          totalRevenue += parseFloat(item.revenue || 0);
+          totalImpressions += parseInt(item.impressions || 0, 10);
+        });
+        const cpm = totalImpressions > 0 ? (totalRevenue / totalImpressions) * 1000 : 0;
+        setLiveAdsterraData({ impressions: totalImpressions, revenue: totalRevenue, cpm });
+      }
+    } catch (e) {
+      console.error('Adsterra Live API fetch error:', e);
+    } finally {
+      setIsFetchingLive(false);
+    }
+  };
 
   const toggleDevMode = () => {
     const nextState = !devModeActive;
@@ -234,7 +272,64 @@ export function App() {
         {/* TAB 1: OVERVIEW & REVENUE ANALYTICS */}
         {activeTab === 'overview' && (
           <div className="space-y-8">
-            {/* Top Metric Cards */}
+            {/* Live API Keys Integration Box */}
+            <div className="border border-purple-500/30 bg-purple-500/5 p-6 rounded-2xl space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-bold text-sm text-purple-400">⚡ Connect Official API Keys for ACTUAL Live Revenue & Traffic</h3>
+                  <p className="text-xs text-zinc-400">Enter your Adsterra Publisher API key to pull live dollar balances, impressions, and exact CPMs directly from your account.</p>
+                </div>
+                <button
+                  onClick={fetchActualAdsterraData}
+                  disabled={!adsterraApiKey || isFetchingLive}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  {isFetchingLive ? 'Fetching Live Stats...' : 'Sync Actual Live Data 🔄'}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label className="text-[11px] font-mono font-semibold text-zinc-300 block mb-1">Adsterra Publisher API Key</label>
+                  <input
+                    type="password"
+                    placeholder="Paste key from Adsterra -> Profile -> API"
+                    value={adsterraApiKey}
+                    onChange={(e) => saveApiKeys(e.target.value, cloudflareToken)}
+                    className="w-full h-10 px-3 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-zinc-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-mono font-semibold text-zinc-300 block mb-1">Cloudflare Analytics Read Token (Optional)</label>
+                  <input
+                    type="password"
+                    placeholder="Paste Cloudflare API Token"
+                    value={cloudflareToken}
+                    onChange={(e) => saveApiKeys(adsterraApiKey, e.target.value)}
+                    className="w-full h-10 px-3 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-zinc-200"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Actual Live Revenue Card (If API connected) */}
+            {liveAdsterraData && (
+              <div className="p-6 border border-emerald-500/40 bg-emerald-500/10 rounded-2xl flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider block mb-1">✅ ACTUAL ADSTERRA LIVE DATA</span>
+                  <div className="font-mono text-3xl font-extrabold text-foreground">
+                    ${liveAdsterraData.revenue.toFixed(2)} USD <span className="text-sm font-normal text-zinc-400">({liveAdsterraData.impressions.toLocaleString()} Impressions)</span>
+                  </div>
+                </div>
+                <div className="text-right font-mono">
+                  <span className="text-xs text-zinc-400 block">Actual Average CPM</span>
+                  <span className="text-2xl font-bold text-emerald-400">${liveAdsterraData.cpm.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Metric Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="border border-zinc-800 bg-zinc-900/60 p-5 rounded-2xl">
                 <span className="text-xs text-zinc-400 font-medium block mb-1">Active Live Tools</span>
