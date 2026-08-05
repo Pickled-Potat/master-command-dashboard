@@ -34,12 +34,12 @@ const PORTFOLIO_TOOLS: ToolItem[] = [
     url: 'https://3d-print-calc.pages.dev',
     githubRepo: 'https://github.com/Pickled-Potat/3d-print-calc',
     status: 'LIVE',
-    estDailyVisitors: 150,
+    estDailyVisitors: 0,
     adSlots: 2,
     amazonTag: 'nichetools-21',
-    avgSessionDuration: '2m 14s',
-    repeatUserRate: '44%',
-    monthlyCalculations: 3420
+    avgSessionDuration: 'Awaiting Analytics Sync',
+    repeatUserRate: 'Awaiting Analytics Sync',
+    monthlyCalculations: 0
   },
   {
     id: 'tool-2',
@@ -48,12 +48,12 @@ const PORTFOLIO_TOOLS: ToolItem[] = [
     url: 'https://obs-bitrate-calc.pages.dev',
     githubRepo: 'https://github.com/Pickled-Potat/obs-bitrate-calc',
     status: 'LIVE',
-    estDailyVisitors: 200,
+    estDailyVisitors: 0,
     adSlots: 2,
     amazonTag: 'nichetools-21',
-    avgSessionDuration: '1m 52s',
-    repeatUserRate: '38%',
-    monthlyCalculations: 4180
+    avgSessionDuration: 'Awaiting Analytics Sync',
+    repeatUserRate: 'Awaiting Analytics Sync',
+    monthlyCalculations: 0
   },
   {
     id: 'tool-3',
@@ -62,11 +62,11 @@ const PORTFOLIO_TOOLS: ToolItem[] = [
     url: 'https://audio-gear-calc.pages.dev',
     githubRepo: 'https://github.com/Pickled-Potat/audio-gear-calc',
     status: 'QUEUED',
-    estDailyVisitors: 100,
+    estDailyVisitors: 0,
     adSlots: 2,
     amazonTag: 'nichetools-21',
-    avgSessionDuration: '1m 30s',
-    repeatUserRate: '25%',
+    avgSessionDuration: 'Queued',
+    repeatUserRate: 'Queued',
     monthlyCalculations: 0
   },
   {
@@ -76,11 +76,11 @@ const PORTFOLIO_TOOLS: ToolItem[] = [
     url: 'https://cnc-cost-calc.pages.dev',
     githubRepo: 'https://github.com/Pickled-Potat/cnc-cost-calc',
     status: 'QUEUED',
-    estDailyVisitors: 100,
+    estDailyVisitors: 0,
     adSlots: 2,
     amazonTag: 'nichetools-21',
-    avgSessionDuration: '1m 40s',
-    repeatUserRate: '30%',
+    avgSessionDuration: 'Queued',
+    repeatUserRate: 'Queued',
     monthlyCalculations: 0
   }
 ];
@@ -88,58 +88,49 @@ const PORTFOLIO_TOOLS: ToolItem[] = [
 interface KeywordRank {
   keyword: string;
   site: string;
-  googleRank: number;
-  bingRank: number;
+  googleRank: string;
+  bingRank: string;
   monthlySearchVolume: string;
   change: string;
-  status: 'TOP_3' | 'PAGE_1' | 'CLIMBING';
+  status: 'PENDING_INDEX' | 'INDEXED';
 }
 
 const KEYWORD_RANKINGS: KeywordRank[] = [
   {
     keyword: 'bambu lab print cost calculator',
     site: '3D Print Calc',
-    googleRank: 1,
-    bingRank: 1,
-    monthlySearchVolume: '4,400',
-    change: '0',
-    status: 'TOP_3'
+    googleRank: 'Awaiting Index',
+    bingRank: 'Awaiting Index',
+    monthlySearchVolume: 'Awaiting Google Search Console Sync',
+    change: '-',
+    status: 'PENDING_INDEX'
   },
   {
     keyword: '3d print cost estimator free',
     site: '3D Print Calc',
-    googleRank: 3,
-    bingRank: 2,
-    monthlySearchVolume: '12,100',
-    change: '+2',
-    status: 'TOP_3'
+    googleRank: 'Awaiting Index',
+    bingRank: 'Awaiting Index',
+    monthlySearchVolume: 'Awaiting Google Search Console Sync',
+    change: '-',
+    status: 'PENDING_INDEX'
   },
   {
     keyword: 'obs bitrate calculator 2026',
     site: 'OBS Bitrate Calc',
-    googleRank: 2,
-    bingRank: 1,
-    monthlySearchVolume: '9,800',
-    change: '+1',
-    status: 'TOP_3'
+    googleRank: 'Awaiting Index',
+    bingRank: 'Awaiting Index',
+    monthlySearchVolume: 'Awaiting Google Search Console Sync',
+    change: '-',
+    status: 'PENDING_INDEX'
   },
   {
     keyword: 'twitch 1080p60 nvenc bitrate',
     site: 'OBS Bitrate Calc',
-    googleRank: 4,
-    bingRank: 3,
-    monthlySearchVolume: '6,600',
-    change: '+3',
-    status: 'PAGE_1'
-  },
-  {
-    keyword: 'calculate 3d print filament power cost',
-    site: '3D Print Calc',
-    googleRank: 5,
-    bingRank: 4,
-    monthlySearchVolume: '3,200',
-    change: '+4',
-    status: 'PAGE_1'
+    googleRank: 'Awaiting Index',
+    bingRank: 'Awaiting Index',
+    monthlySearchVolume: 'Awaiting Google Search Console Sync',
+    change: '-',
+    status: 'PENDING_INDEX'
   }
 ];
 
@@ -594,15 +585,15 @@ export function App() {
                           <span className="text-[10px] text-emerald-400 font-bold">({item.change})</span>
                         </td>
                         <td className="py-3.5 px-3 text-zinc-400">{item.site}</td>
-                        <td className="py-3.5 px-3 font-bold text-emerald-400 text-sm">#{item.googleRank}</td>
-                        <td className="py-3.5 px-3 font-bold text-blue-400 text-sm">#{item.bingRank}</td>
+                        <td className="py-3.5 px-3 font-semibold text-amber-400 text-xs">{item.googleRank}</td>
+                        <td className="py-3.5 px-3 font-semibold text-blue-400 text-xs">{item.bingRank}</td>
                         <td className="py-3.5 px-3 text-zinc-300">{item.monthlySearchVolume}</td>
                         <td className="py-3.5 px-3">
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                              item.status === 'TOP_3'
+                              item.status === 'INDEXED'
                                 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                             }`}
                           >
                             {item.status}
