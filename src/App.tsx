@@ -28,6 +28,20 @@ interface ToolItem {
 
 const PORTFOLIO_TOOLS: ToolItem[] = [
   {
+    id: 'tool-hub',
+    name: 'Niche Tools Network (Master Unified Suite)',
+    niche: 'All-in-One Creator & Engineering Suite',
+    url: 'https://nichetools.pages.dev',
+    githubRepo: 'https://github.com/Pickled-Potat/nichetools-hub',
+    status: 'LIVE',
+    estDailyVisitors: 0,
+    adSlots: 5,
+    amazonTag: 'nichetools-21',
+    avgSessionDuration: 'Awaiting Analytics Sync',
+    repeatUserRate: 'Awaiting Analytics Sync',
+    monthlyCalculations: 0
+  },
+  {
     id: 'tool-1',
     name: '3D Printing Cost Estimator',
     niche: '3D Printing & Manufacturing',
